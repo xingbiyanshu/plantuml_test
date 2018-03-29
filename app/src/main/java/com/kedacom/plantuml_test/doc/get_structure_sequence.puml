@@ -1,0 +1,54 @@
+
+
+@startuml
+title <size:20> Getting-Structure Sequence Diagram\n
+
+participant StructurePresenter as SP
+participant JniManager as JM
+
+[->>SP: request structure
+==request structure version==
+SP->>JM: request structure version
+alt structure exist
+    SP<<--JM: valid structure version(>0)
+else structure not exist
+    SP<<--JM: invalid structure version(=0)
+end
+
+SP->SP: get local structure version
+
+alt local version < remote version
+    ==request structure==
+    SP->>JM: request structure
+    loop
+    SP<<--JM: member list
+    end
+    SP<<--JM: member list finished
+    loop
+    SP<<--JM: department list
+    end
+    SP<<--JM: department list finished
+
+    SP<<--JM: structure finished
+
+    [<[#green]-SP:structure ready
+    ||20||
+
+else local version >= remote version
+    ==load local structure==
+    alt local structure loaded
+        [<[#green]-SP:structure ready
+        ||20||
+    else local structure not loaded
+        alt local structure exist
+            SP->SP: load local structure
+            [<[#green]-SP:structure ready
+            ||20||
+        else local structure not exist
+            [<[#red]-SP: request structure failed
+            ||20||
+        end
+    end
+end
+
+@enduml

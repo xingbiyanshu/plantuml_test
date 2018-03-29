@@ -1,0 +1,67 @@
+
+
+#created by sissi, 2017-9-5
+
+@startuml
+
+'floating note : <size:20><b>获取组织架构流程图
+
+title <size:24><b>获取组织架构流程图\n\n
+
+start
+
+:从文件加载组织架构索引;
+note
+组织架构索引包含多条组织架构记录。
+一条组织架构记录包含：
+登录账号、组织架构版本号、组织架构文件路径
+======
+最开始本地无索引文件，此时索引为空
+end note
+
+'TODO 使用图形表示数据输入输出
+
+:登录APS成功 / 登录Platform成功;
+
+partition 从服务器获取 {
+
+:获取服务器上组织架构版本号;
+
+if (成功？) then (是)
+
+    :查询本地组织架构版本号;
+    note
+    根据当前登录账号从索引查询本地版本号
+    若查询失败则本地版本号置0（有效的版本号大于0）
+    end note
+
+    if (本地版本号小于服务器版本号？) then (是)
+        :获取服务器上组织架构;
+        if (成功获取完毕？) then (是)
+            :更新组织架构及索引;
+            note: 更新到内存和记录文件
+            stop
+            note: 组织架构已准备好
+        endif
+    endif
+endif
+
+}
+
+partition 从本地获取 {
+
+if (尚未加载本地组织架构？) then (是)
+    if (存在本地组织架构？) then(是)
+        :加载本地组织架构;
+    else (否)
+        end
+        note: 未获取到组织架构
+    endif
+endif
+
+stop
+note: 组织架构已准备好
+
+}
+
+@enduml

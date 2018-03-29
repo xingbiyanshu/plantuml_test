@@ -1,0 +1,52 @@
+'@startuml
+'(*)  -->"check input"
+'If "input is verbose" then
+'--> [Yes] "turn on verbosity"
+'--> "run command"
+'else
+'--> "run command"
+'Endif
+'-->(*)
+'@enduml
+
+
+
+
+@startuml
+
+'floating note : <size:20><b>Android加固流程图
+
+title <size:24><b>Android加固流程图\n\n
+
+|源程序|
+partition 加壳流程 {
+start
+|源程序|
+:打包源程序得到raw.apk;
+
+|壳程序|
+:打包壳程序得到shell.apk;
+
+|加壳程序|
+:加密raw.apk得到壳数据;
+:提取shell.apk的classes.dex;
+:将壳数据整合进classes.dex;
+:将classes.dex替换进shell.apk;
+
+|壳程序|
+:签名shell.apk;
+stop
+}
+
+partition 脱壳流程 {
+|壳程序|
+start
+:读取classes.dex;
+:从classes.dex尾部读取壳数据大小;
+:根据壳数据大小定位并读取壳数据;
+:解密壳数据得到raw.apk;
+:动态加载raw.apk运行;
+stop
+}
+
+@enduml
